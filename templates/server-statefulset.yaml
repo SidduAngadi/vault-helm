@@ -66,6 +66,14 @@ spec:
           {{ template "vault.resources" . }}
           image: {{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default "latest" }}
           imagePullPolicy: {{ .Values.server.image.pullPolicy }}
+          {{- if .Values.server.resources }}
+          resources:
+            {{- if eq (typeOf .Values.server.resources) "string" }}
+            {{ tpl .Values.server.resources . | nindent 12 | trim }}
+            {{- else }}
+            {{- toYaml .Values.server.resources | nindent 12 }}
+            {{- end }}
+          {{- end }}
           command:
           - "/bin/sh"
           - "-ec"
